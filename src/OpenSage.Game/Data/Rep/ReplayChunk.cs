@@ -69,6 +69,10 @@ namespace OpenSage.Data.Rep
                             order.AddScreenRectangleArgument(reader.ReadRectangle());
                             break;
 
+                        case OrderArgumentType.Unknown4:
+                            //skip silently
+                            break;
+
                         default:
                             throw new InvalidOperationException();
                     }
