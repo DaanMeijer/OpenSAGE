@@ -141,6 +141,11 @@ namespace OpenSage.Graphics
             in ColorRgbaF color,
             in bool flipped = false)
         {
+            if (image == null)
+            {
+                return;
+            }
+
             ref var batchItem = ref CreateBatchItem();
 
             batchItem.Texture = image;
