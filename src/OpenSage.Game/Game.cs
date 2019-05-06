@@ -18,6 +18,7 @@ using OpenSage.Utilities;
 using Veldrid;
 using Veldrid.ImageSharp;
 using Player = OpenSage.Logic.Player;
+using OpenSage.Data.Rep;
 
 namespace OpenSage
 {
@@ -85,6 +86,32 @@ namespace OpenSage
         /// This is only false when the game is shutting down.
         /// </summary>
         public bool IsRunning { get; }
+
+        public void LoadReplayFile(FileSystemEntry replayFileEntry)
+        {
+
+            ReplayFile replayFile = ReplayFile.FromFileSystemEntry(replayFileEntry);
+
+            // TODO: This probably isn't right.
+            var mapFilenameParts = replayFile.Header.Metadata.MapFile.Split('/');
+            var mapFilename = $"Maps\\{mapFilenameParts[1]}\\{mapFilenameParts[1]}.map";
+
+            Scene2D.WndWindowManager.PopWindow();
+
+            // TODO: set the correct factions & colors
+            PlayerSetting[] pSettings = new[]
+            {
+                                new PlayerSetting("America", new ColorRgb(255, 0, 0)),
+                                new PlayerSetting("Observer", new ColorRgb(255, 255, 255)),
+                            };
+
+            StartMultiPlayerGame(
+                mapFilename,
+                new ReplayConnection(replayFile),
+                pSettings,
+                0);
+
+        }
 
         /// <summary>
         /// Is the game running logic updates?
