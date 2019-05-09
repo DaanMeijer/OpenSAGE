@@ -31,7 +31,7 @@ namespace OpenSage.Mods.Generals.Gui
                         file.FilePath,
                         new[]
                         {
-                            replayFile.Header.Filename, // Path.GetFileNameWithoutExtension(file.FilePath),
+                            Path.GetFileNameWithoutExtension(file.FilePath),
                             $"{replayFile.Header.Timestamp.Hour.ToString("D2")}:{replayFile.Header.Timestamp.Minute.ToString("D2")}",
                             replayFile.Header.Version,
                             replayFile.Header.Metadata.MapFile.Replace("maps/", string.Empty)
@@ -62,6 +62,9 @@ namespace OpenSage.Mods.Generals.Gui
                             using (var fileSystem = GetReplaysFileSystem(context.Game))
                             {
                                 var replayFileEntry = fileSystem.GetFile((string) listBox.Items[listBox.SelectedIndex].DataItem);
+
+                                context.Game.Scene2D.WndWindowManager.PopWindow();
+
                                 context.Game.LoadReplayFile(replayFileEntry);
                             }
 

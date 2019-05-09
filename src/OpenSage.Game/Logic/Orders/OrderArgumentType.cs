@@ -10,6 +10,8 @@
         Unknown5 = 5,
         Position = 6,
         ScreenPosition = 7,
-        ScreenRectangle = 8
+        ScreenRectangle = 8,
+        Unknown9 = 9,
+        Unknown10 = 10
     }
 }

@@ -25,7 +25,7 @@ namespace OpenSage
     public sealed class Game : DisposableBase
     {
         // TODO: These should be configurable at runtime with GameSpeed.
-        private const double LogicUpdateInterval = 1000.0 / 5.0;
+        private const double LogicUpdateInterval = 1000.0 / 50.0;
         private const double ScriptingUpdateInterval = 1000.0 / 30.0;
 
         private readonly FileSystem _fileSystem;
@@ -96,7 +96,6 @@ namespace OpenSage
             var mapFilenameParts = replayFile.Header.Metadata.MapFile.Split('/');
             var mapFilename = $"Maps\\{mapFilenameParts[1]}\\{mapFilenameParts[1]}.map";
 
-            Scene2D.WndWindowManager.PopWindow();
 
             // TODO: set the correct factions & colors
             PlayerSetting[] pSettings = new[]

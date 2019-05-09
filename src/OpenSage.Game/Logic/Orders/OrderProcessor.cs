@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 using OpenSage.Data.Ini;
 using OpenSage.Logic.Object;
 
@@ -15,8 +16,11 @@ namespace OpenSage.Logic.Orders
             _game = game;
         }
 
+        public NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public void Process(IEnumerable<Order> orders)
         {
+            
             foreach (var order in orders)
             {
                 var player = _game.Scene3D.Players[(int) order.PlayerIndex];
@@ -51,7 +55,10 @@ namespace OpenSage.Logic.Orders
                         break;
 
                     case OrderType.Sell:
-                        _game.Scene3D.GameObjects.Remove(player.SelectedUnits.First());
+                        foreach(var unit in player.SelectedUnits)
+                        {
+                            _game.Scene3D.GameObjects.Remove(unit);
+                        }
                         _game.Selection.ClearSelectedObjects(player);
                         break;
 
@@ -61,13 +68,19 @@ namespace OpenSage.Logic.Orders
 
                     case OrderType.SetSelection:
                         // TODO: First argument is an unknown boolean.
+                        try
+                        {
+                            var objectIds = order.Arguments.Skip(1)
+                                .Select(x => (int) x.Value.ObjectId)
+                                .Select(_game.Scene3D.GameObjects.GetObjectById)
+                                .ToArray();
 
-                        var objectIds = order.Arguments.Skip(1)
-                            .Select(x => (int) x.Value.ObjectId)
-                            .Select(_game.Scene3D.GameObjects.GetObjectById)
-                            .ToArray();
+                            _game.Selection.SetSelectedObjects(player, objectIds);
+                        }catch(System.Exception e)
+                        {
+                            logger.Error(e, "Error while setting selection");
+                        }
 
-                        _game.Selection.SetSelectedObjects(player, objectIds);
                         break;
 
                     case OrderType.ClearSelection:
@@ -75,15 +88,47 @@ namespace OpenSage.Logic.Orders
                         break;
 
                     case OrderType.SetRallyPoint:
-                          var objIds = order.Arguments.Skip(1)
-                            .Select(x => (int) x.Value.ObjectId)
-                            .Select(_game.Scene3D.GameObjects.GetObjectById)
-                            .ToArray();
-                        _game.Selection.SetRallyPointForSelectedObjects(player, objIds, new Vector3());
+                        try
+                        {
+                            var objIds = order.Arguments.Skip(1)
+                                .Select(x => (int) x.Value.ObjectId)
+                                .Select(_game.Scene3D.GameObjects.GetObjectById)
+                                .ToArray();
+                            _game.Selection.SetRallyPointForSelectedObjects(player, objIds, new Vector3());
+
+                        }
+                        catch (System.Exception e)
+                        {
+                            logger.Error(e, "Error while setting selection");
+                        }
                         break;
 
                     case OrderType.Unknown27:
                         _game.EndGame();
+                        break;
+
+                    case OrderType.ChooseGeneralPromotion:
+                        //gla:
+                        //tier 1:
+                        //34, 35, 36
+
+                        //usa:
+                        //tier1:
+                        //12, 13, 14
+                        break;
+
+                    default:
+                        var args = new StringBuilder();
+                        foreach(var argument in order.Arguments)
+                        {
+                            if (argument != order.Arguments[0])
+                            {
+                                args.Append(",");
+                            }
+                            args.Append(argument.ToString());
+                        }
+
+                        logger.Info($"Unimplemented order type: {order.OrderType.ToString()} ({args})");
                         break;
                 }
             }

@@ -38,7 +38,7 @@
         Unknown1007 = 1007,
         Unknown1008 = 1008,
         Unknown1009 = 1009,
-        Unknown1010 = 1010,
+        Unknown1010 = 1010, //something to do with an object
         Unknown1011 = 1011,
         Unknown1012 = 1012,
         Unknown1013 = 1013,
@@ -69,11 +69,11 @@
         Unknown1038 = 1038,
         Unknown1039 = 1039,
         Unknown1040 = 1040,
-        Unknown1041 = 1041,
+        Unknown1041 = 1041, //encountered when spawning usa spydrone (Integer:16,Position:<1055.208, 466.9498, 18.75>,ObjectId:0,Integer:928,ObjectId:657)
         Unknown1042 = 1042,
 
-        Unknown1044 = 1044,
-        Unknown1045 = 1045,
+        ChooseGeneralPromotion = 1044, //something with general promotion? gla first promotion -> arg 34, gla second promotion -> arg 35, gla third promotion -> arg 36
+        Unknown1045 = 1045, //encountered while adding landmines to power plant: ObjectId:671,Integer:1604, also when upgrading usa power plant (ObjectId:673,Integer:1593), (ObjectId:671,Integer:1593)
         Unknown1046 = 1046,
 
         Unknown1048 = 1048,
@@ -118,6 +118,16 @@
         Unknown1087 = 1087,
         Unknown1088 = 1088,
         Unknown1089 = 1089,
+        Unknown1090 = 1090,
+        Unknown1091 = 1091,
+
+        Unknown1093 = 1093,
+        Unknown1094 = 1094,
+
+        Unknown1096 = 1096,
+
+        Unknown1098 = 1098,
+        Unknown1099 = 1099,
 
         Zero = 0
     }
