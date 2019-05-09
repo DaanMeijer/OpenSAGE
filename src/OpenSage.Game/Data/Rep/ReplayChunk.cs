@@ -70,6 +70,7 @@ namespace OpenSage.Data.Rep
                             order.AddScreenRectangleArgument(reader.ReadRectangle());
                             break;
 
+
                             
                         case OrderArgumentType.Unknown4:
                             //in order to align bytes in a random replay, we needed to read 4. has to do with DrawBoxSelection
