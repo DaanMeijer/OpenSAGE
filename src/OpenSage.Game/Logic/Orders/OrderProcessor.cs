@@ -16,7 +16,7 @@ namespace OpenSage.Logic.Orders
             _game = game;
         }
 
-        public NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public void Process(IEnumerable<Order> orders)
         {
@@ -24,6 +24,15 @@ namespace OpenSage.Logic.Orders
             foreach (var order in orders)
             {
                 var player = _game.Scene3D.Players[(int) order.PlayerIndex];
+
+                if(order.OrderType == OrderType.SetCameraPosition)
+                {
+                    logger.Trace($"Order for player {player.ToString()}: {order.OrderType.ToString()}");
+                }
+                else
+                {
+                    logger.Debug($"Order for player {player.ToString()}: {order.OrderType.ToString()}");
+                }
 
                 switch (order.OrderType)
                 {
