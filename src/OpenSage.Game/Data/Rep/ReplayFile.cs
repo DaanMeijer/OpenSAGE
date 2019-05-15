@@ -14,30 +14,35 @@ namespace OpenSage.Data.Rep
             using (var stream = entry.Open())
             using (var reader = new BinaryReader(stream, Encoding.Unicode, true))
             {
-                var result = new ReplayFile
-                {
-                    Header = ReplayHeader.Parse(reader)
-                };
+                return FromBinaryReader(reader, onlyHeader);
+            }
+        }
 
-                if (onlyHeader)
-                {
-                    return result;
-                }
+        public static ReplayFile FromBinaryReader(BinaryReader reader, bool onlyHeader = false)
+        {
+            var result = new ReplayFile
+            {
+                Header = ReplayHeader.Parse(reader)
+            };
 
-                var chunks = new List<ReplayChunk>();
-                while (reader.BaseStream.Position < reader.BaseStream.Length)
-                {
-                    chunks.Add(ReplayChunk.Parse(reader));
-                }
-                result.Chunks = chunks;
-
-                if (result.Header.NumTimecodes != chunks[chunks.Count - 1].Header.Timecode)
-                {
-                    throw new InvalidDataException();
-                }
-
+            if (onlyHeader)
+            {
                 return result;
             }
+
+            var chunks = new List<ReplayChunk>();
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                chunks.Add(ReplayChunk.Parse(reader));
+            }
+            result.Chunks = chunks;
+
+            if (result.Header.NumTimecodes != chunks[chunks.Count - 1].Header.Timecode)
+            {
+                throw new InvalidDataException();
+            }
+
+            return result;
         }
     }
 }

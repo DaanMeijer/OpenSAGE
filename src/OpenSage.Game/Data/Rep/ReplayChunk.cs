@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using OpenSage.Data.Utilities.Extensions;
 using OpenSage.FileFormats;
 using OpenSage.Logic.Orders;
@@ -12,6 +13,22 @@ namespace OpenSage.Data.Rep
     {
         public ReplayChunkHeader Header { get; private set; }
         public Order Order { get; private set; }
+
+        public override string ToString()
+        {
+            var args = new StringBuilder();
+            foreach(var argument in Order.Arguments)
+            {
+                if(args.Length != 0)
+                {
+                    args.Append(",");
+                }
+                args.Append(argument);
+            }
+
+            return $"[{Header.Timecode}]: {Order.OrderType} ({args.ToString()})";
+            return base.ToString();
+        }
 
         internal static ReplayChunk Parse(BinaryReader reader)
         {
