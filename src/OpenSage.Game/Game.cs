@@ -96,9 +96,6 @@ namespace OpenSage
             var mapFilenameParts = replayFile.Header.Metadata.MapFile.Split('/');
             var mapFilename = $"Maps\\{mapFilenameParts[1]}\\{mapFilenameParts[1]}.map";
 
-
-            Scene2D.WndWindowManager.PopWindow();
-
             // TODO: set the correct factions & colors
             PlayerSetting[] pSettings = new[]
             {
