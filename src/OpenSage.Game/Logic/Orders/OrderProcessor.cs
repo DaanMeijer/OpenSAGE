@@ -54,7 +54,7 @@ namespace OpenSage.Logic.Orders
 
                             gameObject.Transform.Translation = position;
                             gameObject.Transform.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, angle);
-                            gameObject.StartConstruction(_game.MapTime);
+                            gameObject.StartConstruction();
                         }
                         break;
 

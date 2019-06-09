@@ -168,6 +168,28 @@ namespace OpenSage.Logic.Object
 
             spawnedUnit.Transform.Translation = translation;
             spawnedUnit.MoveTo(RallyPoint);
+
+            if (Definition.KindOf != null && Definition.KindOf.Get(ObjectKinds.Structure))
+            {
+                HandleConstruction();
+            }
+        }
+
+        private void HandleConstruction()
+        {
+            if (ModelConditionFlags.Get(ModelConditionFlag.ActivelyBeingConstructed))
+            {
+                ModelConditionFlags.Set(ModelConditionFlag.AwaitingConstruction, false);
+                ModelConditionFlags.Set(ModelConditionFlag.PartiallyConstructed, true);
+
+                _spent += 0.02d; // 50 ticks per second? this value seems to be correct with the build times anyway
+                if (_spent >= _cost)
+                {
+                    ModelConditionFlags.Set(ModelConditionFlag.ActivelyBeingConstructed, false);
+                    ModelConditionFlags.Set(ModelConditionFlag.PartiallyConstructed, false);
+                    ModelConditionFlags.Set(ModelConditionFlag.ConstructionComplete, true);
+                }
+            }
         }
 
         internal void MoveTo(Vector3 targetPos)
@@ -187,29 +209,25 @@ namespace OpenSage.Logic.Object
             SetModelConditionFlags(flags);
         }
 
-        internal void StartConstruction(in TimeInterval gameTime)
+        private double _cost;
+        private double _spent;
+        public double Progress => _spent / _cost;
+
+        internal void StartConstruction()
         {
             if (Definition.KindOf == null) return;
 
             if (Definition.KindOf.Get(ObjectKinds.Structure))
             {
                 var flags = new BitArray<ModelConditionFlag>();
-                flags.Set(ModelConditionFlag.ActivelyBeingConstructed, true);
                 flags.Set(ModelConditionFlag.AwaitingConstruction, true);
-                flags.Set(ModelConditionFlag.PartiallyConstructed, true);
-                SetModelConditionFlags(flags);
-                ConstructionStart = gameTime.TotalTime;
 
-                // this is strang in startcontruction, however, we have no better place to put it yet. belongs in finishconstruction
-                foreach (var behavior in Definition.Behaviors)
-                {
-                    if (behavior is SpawnBehaviorModuleData)
-                    {
-                        var spawnTemplate = ((SpawnBehaviorModuleData) behavior).SpawnTemplateName;
-                        var unitDefinition = Context.Objects.Find(x => x.Name == spawnTemplate);
-                        Spawn(unitDefinition);
-                    }
-                }
+                // this should not be set to true, but we can't start construction with a unit yet
+                flags.Set(ModelConditionFlag.ActivelyBeingConstructed, true);
+
+                SetModelConditionFlags(flags);
+
+                _cost = (double)(Definition.BuildTime);
             }
         }
 
@@ -261,19 +279,6 @@ namespace OpenSage.Logic.Object
                 }
             }
 
-            // Check if the unit is being constructed
-            flags.SetAll(false);
-            flags.Set(ModelConditionFlag.ActivelyBeingConstructed, true);
-            flags.Set(ModelConditionFlag.AwaitingConstruction, true);
-            flags.Set(ModelConditionFlag.PartiallyConstructed, true);
-            if (ModelConditionFlags.And(flags).AnyBitSet)
-            {
-                if (gameTime.TotalTime > (ConstructionStart + TimeSpan.FromSeconds(Definition.BuildTime)))
-                {
-                    SetModelConditionFlags(new BitArray<ModelConditionFlag>());
-                }
-            }
-            
             // Update all draw modules
             foreach (var drawModule in DrawModules)
             {
